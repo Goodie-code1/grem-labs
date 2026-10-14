@@ -296,7 +296,11 @@ const navItems = [
 
             <div className="flex h-11 w-11 items-center justify-center border border-orange-500/60 bg-orange-500/10 text-orange-400">
 
-              <Atom size={27} />
+              <img
+  src="/grem-labs-logo.png"
+  alt="Grem Labs"
+  className="h-10 w-auto object-contain"
+/>
 
             </div>
 
@@ -1352,7 +1356,11 @@ const navItems = [
 
           <a href="#home" className="flex items-center gap-3">
 
-            <Atom className="text-orange-500" size={27} />
+            <img
+  src="/grem-labs-logo.png"
+  alt="Grem Labs"
+  className="h-10 w-auto object-contain"
+/>
 
             <div>
 
