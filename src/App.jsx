@@ -79,7 +79,7 @@ const experiments = [
     launchDate: "SUNDAY, NOVEMBER 1, 2026",
     launchTime: "3:00 PM EST (UTC−5)",
     status: "COUNTDOWN ACTIVE",
-    description: "SUPER GREM ($SG) is preparing for launch. The countdown is on.",
+    description: "",
     icon: FlaskConical,
     statusClass:
       "border-orange-500/20 bg-orange-500/10 text-orange-300",
@@ -288,6 +288,8 @@ const navItems = [
   ['The Lab', '#home'],
 
   ['Experiments', '#experiments'],
+
+  ['Events', '#events'],
 
   ['Roadmap', '#roadmap'],
 
@@ -845,11 +847,11 @@ const navItems = [
 
             </h3>
 
-            <p className="mt-2 text-sm leading-6 text-gray-400">
-
-              {experiment.description}
-
-            </p>
+            {experiment.description && (
+              <p className="mt-2 text-sm leading-6 text-gray-400">
+                {experiment.description}
+              </p>
+            )}
 
             {experiment.ticker && (
               <p className="mt-2 font-mono text-sm font-bold text-orange-400">{experiment.ticker}</p>
@@ -964,6 +966,26 @@ const navItems = [
   </div>
 
 </section>
+
+        {/* AMA Announcement */}
+        <section id="events" className="relative px-5 py-16 sm:px-8 sm:py-20">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-6 flex items-center gap-3">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-orange-500" />
+              <p className="text-xs font-bold uppercase tracking-[0.3em] text-orange-400">
+                Upcoming Event
+              </p>
+            </div>
+            <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-orange-500/20 bg-white/[0.03] p-2 sm:p-3">
+              <img
+                src="/grem-ama.png"
+                alt="Grem Labs Inc. AMA session — Sunday, November 1 at 1 PM EST, with a $50 giveaway"
+                className="block h-auto w-full rounded-xl object-contain"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </section>
 
         <section id="story" className="px-5 py-24 sm:px-8">
 
