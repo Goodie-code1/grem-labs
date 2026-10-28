@@ -1,6 +1,6 @@
 
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
 
@@ -56,26 +56,33 @@ function XLogo({ size = 18 }) {
 
 }
 
+// Sunday, November 1, 2026 at 3:00 PM EST (UTC-5) = 20:00 UTC.
+const SUPER_GREM_LAUNCH_AT = new Date('2026-11-01T20:00:00Z').getTime()
+
+function getSuperGremCountdown() {
+  const difference = Math.max(0, SUPER_GREM_LAUNCH_AT - Date.now())
+  return {
+    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((difference / (1000 * 60)) % 60),
+    seconds: Math.floor((difference / 1000) % 60),
+    complete: difference === 0,
+  }
+}
+
 const experiments = [
-
   {
-
     id: "EXP-001",
-
-    name: "First Experiment",
-
-    status: "AWAITING LAUNCH",
-
-    description:
-
-      "Something is brewing in the lab. Details will be revealed when the experiment is ready.",
-
+    name: "SUPER GREM",
+    ticker: "$SG",
+    image: "/super-grem.png",
+    launchDate: "SUNDAY, NOVEMBER 1, 2026",
+    launchTime: "3:00 PM EST (UTC−5)",
+    status: "COUNTDOWN ACTIVE",
+    description: "SUPER GREM ($SG) is preparing for launch. The countdown is on.",
     icon: FlaskConical,
-
     statusClass:
-
       "border-orange-500/20 bg-orange-500/10 text-orange-300",
-
   },
 
   {
@@ -94,7 +101,7 @@ const experiments = [
 
     statusClass:
 
-      "border-purple-400/20 bg-purple-400/10 text-purple-300",
+      "border-amber-400/20 bg-amber-400/10 text-amber-300",
 
   },
 
@@ -249,6 +256,14 @@ function SectionTitle({ eyebrow, title, description }) {
 export default function App() {
 
   const [menuOpen, setMenuOpen] = useState(false)
+  const [superGremCountdown, setSuperGremCountdown] = useState(getSuperGremCountdown)
+
+  useEffect(() => {
+    const updateCountdown = () => setSuperGremCountdown(getSuperGremCountdown())
+    updateCountdown()
+    const intervalId = window.setInterval(updateCountdown, 1000)
+    return () => window.clearInterval(intervalId)
+  }, [])
 
   const [idea, setIdea] = useState({ name: '', description: '' })
 
@@ -758,8 +773,7 @@ const navItems = [
 
     {/* Experiment cards */}
 
-    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-
+<div className="grid grid-cols-1 items-start gap-5 md:grid-cols-2 xl:grid-cols-3">
       {experiments.map((experiment) => {
 
         const Icon = experiment.icon;
@@ -790,32 +804,37 @@ const navItems = [
 
               >
 
-                {experiment.status}
+                {experiment.id === "EXP-001"
+                  ? superGremCountdown.complete
+                    ? "LAUNCH TIME REACHED"
+                    : experiment.status
+                  : experiment.status}
 
               </span>
 
             </div>
 
-            {/* Visual placeholder */}
-
-            <div className="relative mb-6 flex h-40 flex-col items-center justify-center overflow-hidden rounded-xl border border-white/5 bg-gradient-to-br from-orange-500/[0.10] via-slate-900/40 to-transparent">
-
-              <div className="absolute inset-0 opacity-30">
-
-                <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border border-orange-500/20" />
-
-                <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-orange-500/20" />
-
-              </div>
-
-              <Icon className="relative mb-3 h-9 w-9 text-orange-300 transition duration-300 group-hover:scale-110" />
-
-              <span className="relative text-[10px] font-medium uppercase tracking-[0.25em] text-gray-500">
-
-                Classified Project
-
-              </span>
-
+            {/* Experiment artwork */}
+            <div className="relative mb-6 overflow-hidden rounded-xl border border-orange-500/20 bg-black">
+              {experiment.image ? (
+                <img
+                  src={experiment.image}
+                  alt={`${experiment.name} launch artwork`}
+                  className="block h-auto max-h-[520px] w-full object-contain transition duration-500 group-hover:scale-[1.02]"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="relative flex h-40 flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-orange-500/[0.10] via-slate-900/40 to-transparent">
+                  <div className="absolute inset-0 opacity-30">
+                    <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border border-orange-500/20" />
+                    <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-orange-500/20" />
+                  </div>
+                  <Icon className="relative mb-3 h-9 w-9 text-orange-300 transition duration-300 group-hover:scale-110" />
+                  <span className="relative text-[10px] font-medium uppercase tracking-[0.25em] text-gray-500">
+                    Classified Project
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Experiment details */}
@@ -826,11 +845,49 @@ const navItems = [
 
             </h3>
 
-            <p className="mt-3 min-h-[4.5rem] text-sm leading-6 text-gray-400">
+            <p className="mt-2 text-sm leading-6 text-gray-400">
 
               {experiment.description}
 
             </p>
+
+            {experiment.ticker && (
+              <p className="mt-2 font-mono text-sm font-bold text-orange-400">{experiment.ticker}</p>
+            )}
+
+            {experiment.id === "EXP-001" && (
+              <div className="mt-5 rounded-xl border border-orange-500/25 bg-orange-500/[0.06] p-4">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-orange-400">
+                  {superGremCountdown.complete ? "Launch time" : "Launching in"}
+                </p>
+                {superGremCountdown.complete ? (
+                  <p className="mt-3 text-lg font-black uppercase text-stone-100">
+                    Launch time reached
+                  </p>
+                ) : (
+                  <div className="mt-3 grid grid-cols-4 gap-2 text-center">
+                    {[
+                      ["Days", superGremCountdown.days],
+                      ["Hours", superGremCountdown.hours],
+                      ["Mins", superGremCountdown.minutes],
+                      ["Secs", superGremCountdown.seconds],
+                    ].map(([label, value]) => (
+                      <div key={label} className="rounded-lg border border-white/10 bg-black/30 px-1 py-3">
+                        <p className="text-xl font-black tabular-nums text-stone-100 sm:text-2xl">
+                          {String(value).padStart(2, "0")}
+                        </p>
+                        <p className="mt-1 text-[9px] uppercase tracking-wider text-stone-500">
+                          {label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="mt-3 text-[10px] font-semibold uppercase tracking-wider text-stone-400">
+                  {experiment.launchDate} · {experiment.launchTime}
+                </p>
+              </div>
+            )}
 
             {/* Market data */}
 
